@@ -2,40 +2,38 @@ name: napari-plugin-accelerator
 display_name: napari plugin accelerator demo
 contributions:
   commands:
-    - id: napari-plugin-accelerator.get_reader
-      python_name: napari_plugin_accelerator._reader:napari_get_reader
-      title: Open data with napari plugin accelerator demo
-    - id: napari-plugin-accelerator.write_multiple
-      python_name: napari_plugin_accelerator._writer:write_multiple
-      title: Save multi-layer data with napari plugin accelerator demo
-    - id: napari-plugin-accelerator.write_single_image
-      python_name: napari_plugin_accelerator._writer:write_single_image
-      title: Save image data with napari plugin accelerator demo 
-    - id: napari-plugin-accelerator.make_qwidget
-      python_name: napari_plugin_accelerator._widget:ExampleQWidget
-      title: Make example QWidget
-    - id: napari-plugin-accelerator.make_magic_widget
-      python_name: napari_plugin_accelerator._widget:example_magic_widget
-      title: Make example magic widget
-    - id: napari-plugin-accelerator.make_func_widget
-      python_name: napari_plugin_accelerator._widget:example_function_widget
-      title: Make example function widget 
+    - id: napari-plugin-accelerator.read_zarr
+      title: Zarr reader
+      python_name: napari_plugin_accelerator:get_reader
+    - id: napari-plugin-accelerator.write_zarr
+      title: Zarr writer
+      python_name: napari_plugin_accelerator:write_zarr
+    - id: napari-plugin-accelerator.smooth_image
+      title: Smooth image
+      python_name: napari_plugin_accelerator:smooth_image
+    - id: napari-plugin-accelerator.measure_features
+      title: Measure features
+      python_name: napari_plugin_accelerator:measure_features
+    - id: napari-plugin-accelerator.view_features
+      title: View features
+      python_name: napari_plugin_accelerator:view_features
   readers:
-    - command: napari-plugin-accelerator.get_reader
-      accepts_directories: false
-      filename_patterns: ['*.npy'] 
+    - command: napari-plugin-accelerator.read_zarr
+      filename_patterns:
+        - '*.zarr'
+      accepts_directories: true
   writers:
-    - command: napari-plugin-accelerator.write_multiple
-      layer_types: ['image*','labels*']
-      filename_extensions: []
-    - command: napari-plugin-accelerator.write_single_image
-      layer_types: ['image']
-      filename_extensions: ['.npy'] 
+    - command: napari-plugin-accelerator.write_zarr
+      layer_types: ["image"]
+      filename_extensions: [".zarr"]
   widgets:
-    - command: napari-plugin-accelerator.make_qwidget
-      display_name: Example QWidget
-    - command: napari-plugin-accelerator.make_magic_widget
-      display_name: Example Magic Widget
-    - command: napari-plugin-accelerator.make_func_widget
+    - command: napari-plugin-accelerator.smooth_image
+      display_name: Smooth image
       autogenerate: true
-      display_name: Example Function Widget 
+    - command: napari-plugin-accelerator.measure_features
+      display_name: Measure features
+      autogenerate: true
+    - command: napari-plugin-accelerator.view_features
+      display_name: View features
+      autogenerate: true
+

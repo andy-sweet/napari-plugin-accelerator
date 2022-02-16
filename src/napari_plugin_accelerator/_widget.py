@@ -1,41 +1,68 @@
-"""
-This module is an example of a barebones QWidget plugin for napari
-
-It implements the Widget specification.
-see: https://napari.org/plugins/stable/guides.html#widgets
-
-Replace code below according to your needs.
-"""
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
-from magicgui import magic_factory
-
-
-class ExampleQWidget(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
-    def __init__(self, napari_viewer):
-        super().__init__()
-        self.viewer = napari_viewer
-
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
-
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(btn)
-
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
+from enum import auto
+import pandas as pd
+from qtpy.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout
+from napari import Viewer
+from napari.layers import Image, Labels, Layer
+from napari.types import ImageData
+from napari.utils.misc import StringEnum
+from npe2.types import FullLayerData
+from skimage.filters import gaussian
+from skimage.measure import regionprops_table
 
 
-@magic_factory
-def example_magic_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+class FilterMode(StringEnum):
+    REFLECT = auto()
+    NEAREST = auto()
+    MIRROR = auto()
+    WRAP = auto()
 
 
-# Uses the `autogenerate: true` flag in the plugin manifest
-# to indicate it should be wrapped as a magicgui to autogenerate
-# a widget.
-def example_function_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+def smooth_image(
+        image: ImageData,
+        sigma: float = 1,
+        mode: FilterMode = FilterMode.NEAREST,
+) -> ImageData:
+    return gaussian(image, sigma=sigma, mode=str(mode), preserve_range=True)
+
+
+def measure_features(image: Image, labels: Labels) -> None:
+    prop_names = ('label', 'area', 'intensity_mean')
+    prop_values = regionprops_table(
+            labels.data,
+            intensity_image=image.data,
+            properties=prop_names,
+    )
+    features = pd.DataFrame(prop_values)
+    features.rename(columns={'label': 'index'}, inplace=True)
+    labels.features = features
+
+
+class FeaturesTable(QWidget):
+    def __init__(self, layer: Layer, parent=None):
+        super().__init__(parent)
+        self._layer = layer
+        self._table = QTableWidget()
+        self.set_data(layer.features)
+        self.setLayout(QVBoxLayout())
+        self.layout().addWidget(self._table)
+        layer.events.properties.connect(self._on_features_changed)
+
+    def _on_features_changed(self, event=None):
+        self.set_data(self._layer.features)
+
+    def set_data(self, features: pd.DataFrame) -> None:
+        self._table.setRowCount(features.shape[0])
+        self._table.setColumnCount(features.shape[1])
+        self._table.setVerticalHeaderLabels([str(i) for i in features.index])
+        for c, column in enumerate(features.columns):
+            self._table.setHorizontalHeaderItem(c, QTableWidgetItem(column))
+            for r, value in enumerate(features[column]):
+                self._table.setItem(r, c, QTableWidgetItem(str(value)))
+        self._table.resizeColumnsToContents()
+
+
+def view_features(layer: Layer, viewer: Viewer) -> None:
+    table = FeaturesTable(layer)
+    name = f'Features of {layer.name}'
+    viewer.window.add_dock_widget(table, name=name)
+

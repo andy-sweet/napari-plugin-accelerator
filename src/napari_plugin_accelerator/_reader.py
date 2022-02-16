@@ -1,11 +1,6 @@
-"""
-This module is an example of a barebones numpy reader plugin for napari.
-
-It implements the Reader specification, but your plugin may choose to
-implement multiple readers or even other plugin contributions. see:
-https://napari.org/plugins/stable/guides.html#readers
-"""
-import numpy as np
+from typing import List
+from npe2.types import LayerData, ReaderFunction
+import zarr
 
 
 def napari_get_reader(path):
@@ -28,20 +23,14 @@ def napari_get_reader(path):
         # so we are only going to look at the first file.
         path = path[0]
 
-    # if we know we cannot read the file, we immediately return None.
-    if not path.endswith(".npy"):
-        return None
+    if isinstance(path, str) and path.endswith('.zarr'):
+        return read_zarr
 
-    # otherwise we return the *function* that can read ``path``.
-    return reader_function
+    return None
 
 
-def reader_function(path):
-    """Take a path or list of paths and return a list of LayerData tuples.
-
-    Readers are expected to return data as a list of tuples, where each tuple
-    is (data, [add_kwargs, [layer_type]]), "add_kwargs" and "layer_type" are
-    both optional.
+def read_zarr(path: str) -> List[LayerData]:
+    """Reads a zarr array from a path string.
 
     Parameters
     ----------
@@ -58,15 +47,6 @@ def reader_function(path):
         Both "meta", and "layer_type" are optional. napari will default to
         layer_type=="image" if not provided
     """
-    # handle both a string and a list of strings
-    paths = [path] if isinstance(path, str) else path
-    # load all files into array
-    arrays = [np.load(_path) for _path in paths]
-    # stack arrays into single array
-    data = np.squeeze(np.stack(arrays))
-
-    # optional kwargs for the corresponding viewer.add_* method
-    add_kwargs = {}
-
-    layer_type = "image"  # optional, default is "image"
-    return [(data, add_kwargs, layer_type)]
+    z = zarr.open(path, mode='r')
+    attributes = {'scale': z.attrs['scale']}
+    return [(z, attributes, 'image')]
