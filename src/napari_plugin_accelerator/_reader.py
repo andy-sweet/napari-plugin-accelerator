@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Optional
 from npe2.types import LayerData, ReaderFunction
 import zarr
 
 
-def napari_get_reader(path):
-    """A basic implementation of a Reader contribution.
+def get_reader(path) -> Optional[ReaderFunction]:
+    """Gets the reader associated with a path or list of paths.
 
     Parameters
     ----------
@@ -13,7 +13,7 @@ def napari_get_reader(path):
 
     Returns
     -------
-    function or None
+    Optional[ReaderFunction]
         If the path is a recognized format, return a function that accepts the
         same path or list of paths, and returns a list of layer data tuples.
     """
@@ -30,23 +30,19 @@ def napari_get_reader(path):
 
 
 def read_zarr(path: str) -> List[LayerData]:
-    """Reads a zarr array from a path string.
+    """Reads a zarr array as an image layer from a path.
 
     Parameters
     ----------
-    path : str or list of str
-        Path to file, or list of paths.
+    path : str
+        Path to zarr directory.
 
     Returns
     -------
-    layer_data : list of tuples
-        A list of LayerData tuples where each tuple in the list contains
-        (data, metadata, layer_type), where data is a numpy array, metadata is
-        a dict of keyword arguments for the corresponding viewer.add_* method
-        in napari, and layer_type is a lower-case string naming the type of layer.
-        Both "meta", and "layer_type" are optional. napari will default to
-        layer_type=="image" if not provided
+    layer_data : List[LayerData]
+        A list containing one napari image layer tuple.
     """
     z = zarr.open(path, mode='r')
     attributes = {'scale': z.attrs['scale']}
     return [(z, attributes, 'image')]
+
