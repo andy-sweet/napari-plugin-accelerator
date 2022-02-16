@@ -28,6 +28,14 @@ For example,
     cd napari-plugin-accelerator
     pip install -e .
 
+Then install napari with the default Qt backend.
+
+    pip install "napari[all]"
+
+Finally, run the demo to make sure everthing worked.
+
+    napari examples/demo.py
+
 
 ## Contributing
 
