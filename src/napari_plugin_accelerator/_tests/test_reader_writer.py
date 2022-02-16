@@ -1,8 +1,6 @@
 import numpy as np
 from napari_plugin_accelerator import get_reader, write_zarr
 
-from numpy.random import default_rng
-rng = default_rng()
 
 # tmp_path is a pytest fixture that is a temporary directory as a pathlib.Path
 def test_writer_reader_consistency(tmp_path):
