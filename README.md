@@ -5,7 +5,6 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-plugin-accelerator.svg?color=green)](https://python.org)
 [![tests](https://github.com/andy-sweet/napari-plugin-accelerator/workflows/tests/badge.svg)](https://github.com/andy-sweet/napari-plugin-accelerator/actions)
 [![codecov](https://codecov.io/gh/andy-sweet/napari-plugin-accelerator/branch/main/graph/badge.svg)](https://codecov.io/gh/andy-sweet/napari-plugin-accelerator)
-[![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-plugin-accelerator)](https://napari-hub.org/plugins/napari-plugin-accelerator)
 
 A demo for the plugin accelerator program presentation
 
@@ -23,21 +22,21 @@ https://napari.org/plugins/stable/index.html
 
 ## Installation
 
-You can install `napari-plugin-accelerator` via [pip]:
+Clone this repo, change into that directory, and install the package locally.
+For example,
 
-    pip install napari-plugin-accelerator
-
-
-
-To install latest development version :
-
-    pip install git+https://github.com/andy-sweet/napari-plugin-accelerator.git
+    git clone git@github.com:andy-sweet/napari-plugin-accelerator.git
+    cd napari-plugin-accelerator
+    pip install -e .
 
 
 ## Contributing
 
-Contributions are very welcome. Tests can be run with [tox], please ensure
-the coverage at least stays the same before you submit a pull request.
+This is intended to be a snapshot of an example napari plugin I wrote for
+the napari plugin accelerator workshop program.
+Other than fixing bugs, I don't anticipate any contributions.
+But feel free to fork this if you find that useful!
+
 
 ## License
 
