@@ -1,7 +1,6 @@
 # napari-plugin-accelerator
 
 [![License](https://img.shields.io/pypi/l/napari-plugin-accelerator.svg?color=green)](https://github.com/andy-sweet/napari-plugin-accelerator/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-plugin-accelerator.svg?color=green)](https://pypi.org/project/napari-plugin-accelerator)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-plugin-accelerator.svg?color=green)](https://python.org)
 [![tests](https://github.com/andy-sweet/napari-plugin-accelerator/workflows/tests/badge.svg)](https://github.com/andy-sweet/napari-plugin-accelerator/actions)
 [![codecov](https://codecov.io/gh/andy-sweet/napari-plugin-accelerator/branch/main/graph/badge.svg)](https://codecov.io/gh/andy-sweet/napari-plugin-accelerator)
